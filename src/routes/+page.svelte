@@ -16,7 +16,6 @@
 				.catch((reason) => {
 					error = reason as string;
 				});
-			console.log(JSON.stringify(data));
 			movies = data.movies as Movie[];
 			showingQuery = data.query as string;
 			query = '';
