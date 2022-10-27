@@ -30,6 +30,7 @@
 	"dependencies": {
 		"daisyui": "^2.33.0",
 		"moviedb": "^0.2.12",
+		"openai": "^3.0.1",
 		"web-vitals": "^3.0.4"
 	}
 }

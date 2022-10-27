@@ -1,28 +1,78 @@
 <script lang="ts">
-	import type { PageData } from './$types';
+	import MovieCard from '$lib/components/MovieCard.svelte';
+	import type { Movie } from '$lib/types';
 
-	export let data: PageData;
+	let query = '';
+	let error = '';
+	let showingQuery = '';
+	let movies: Movie[] = [];
+	let searching = false;
+
+	async function onSearchKeyUp(e: KeyboardEvent) {
+		if (e.key === 'Enter') {
+			searching = true;
+			const data = await fetch(`/api/search?q=${query}`)
+				.then((resp) => resp.json() as any)
+				.catch((reason) => {
+					error = reason as string;
+				});
+			console.log(JSON.stringify(data));
+			movies = data.movies as Movie[];
+			showingQuery = data.query as string;
+			query = '';
+			searching = false;
+		}
+	}
 </script>
 
-<main>
-	<div class="p-6 flex flex-col md:flex-row md:flex-wrap gap-4 justify-center">
-		{#each data.movies as m}
-			<div class="group relative w-full h-auto border rounded-md md:w-1/4 max-w-ms">
-				<img
-					class="rounded-md"
-					src={'https://image.tmdb.org/t/p/w780' + (m.backdrop_path || m.poster_path)}
-					alt={m.title}
-				/>
-				<div
-					class="absolute bottom-0 left-0 bg-black opacity-60 w-full px-2 py-6 h-auto text-white group-hover:opacity-95 rounded-b-md"
-				>
-					<h1 class="font-medium">{m.title}</h1>
-					{#if m.overview}
-						<div class="w-full border my-2" />
-						<p>{m.overview}</p>
-					{/if}
+<div class="w-full h-full flex flex-col mb-10">
+	<!-- navbar -->
+	<nav class="w-full p-2 flex flex-row justify-between">
+		<!-- logo -->
+		<a href="/" class="flex flex-row gap-2 items-center p-1">
+			<img class="w-12" src="favicon.png" alt="whatflix" />
+			<h1 class="hidden md:inline-block text-3xl font-bold tracking-wider text-red-600">
+				Whatflix
+			</h1>
+		</a>
+
+		<!-- search input -->
+		<div class="flex flex-row w-full items-center justify-end">
+			<input
+				class="bg-transparent border border-slate-600 px-2 py-2 rounded outline-none w-full h-min text-md md:w-3/6 lg:w-2/6"
+				type="text"
+				placeholder="Describe your search here..."
+				bind:value={query}
+				on:keyup={onSearchKeyUp}
+			/>
+		</div>
+	</nav>
+
+	<!-- content -->
+	<div class="w-full h-full flex flex-col items-center overflow-x-hidden my-6">
+		{#if searching}
+			<!-- show search progess -->
+			<div class="w-full h-full grid place-items-center">
+				<progress class="progress progress-error border border-slate-700 w-56" />
+			</div>
+		{:else if movies.length === 0}
+			<div class="w-full h-full grid place-items-center">
+				<div class="flex flex-col items-center gap-2">
+					<h1 class="text-2xl text-slate-600">No Results found</h1>
+					<p class="text-slate-600 max-w-md text-center">
+						Describe what type of movie you want. For example, you can say "movies like
+						interstellar".
+					</p>
 				</div>
 			</div>
-		{/each}
+		{:else}
+			<h1>Showing results for: "{showingQuery}"</h1>
+			<!-- show results -->
+			<div class="w-11/12 h-full m-12 grid gap-4 sm:grid-cols-3 mt-6">
+				{#each movies as movie}
+					<MovieCard imageUrl={movie.backdrop_path} title={movie.title} likes={10} />
+				{/each}
+			</div>
+		{/if}
 	</div>
-</main>
+</div>
