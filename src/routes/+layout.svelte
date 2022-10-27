@@ -15,4 +15,13 @@
 	}
 </script>
 
+<nav>
+	<div class="navbar bg-neutral text-neutral-content">
+		<div class="flex flex-row items-center gap-1">
+			<img class="w-10" src="favicon.png" alt="" />
+			<a class="normal-case text-red-500 text-xl" href="/">Whatflix</a>
+		</div>
+	</div>
+</nav>
+
 <slot />
