@@ -29,6 +29,7 @@
 	"type": "module",
 	"dependencies": {
 		"daisyui": "^2.33.0",
+		"moviedb": "^0.2.12",
 		"web-vitals": "^3.0.4"
 	}
 }
