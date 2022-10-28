@@ -1,9 +1,6 @@
 import { generateResult } from "$lib/server/gpt3";
 import { searchMovie } from "$lib/server/tmdb";
-import type { Movie } from "$lib/types";
 import { json, type RequestEvent } from "@sveltejs/kit";
-
-const gpt3Key = import.meta.env.GPT3_KEY
 
 export async function GET({ url }: RequestEvent) {
     const query = url.searchParams.get("q")

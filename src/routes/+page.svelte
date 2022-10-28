@@ -1,27 +1,38 @@
 <script lang="ts">
 	import MovieCard from '$lib/components/MovieCard.svelte';
 	import type { Movie } from '$lib/types';
+	import { searchState, type SearchState } from '$lib/uistore';
 
 	let query = '';
-	let error = '';
-	let showingQuery = '';
-	let movies: Movie[] = [];
-	let searching = false;
 
 	async function onSearchKeyUp(e: KeyboardEvent) {
 		if (e.key === 'Enter') {
-			searching = true;
-			const data = await fetch(`/api/search?q=${query}`)
-				.then((resp) => resp.json() as any)
+			searchState.update((v) => ({ ...v, ongoing: true }));
+			const resultState = await fetch(`/api/search?q=${query}`)
+				.then(async (resp) => {
+					const data = await resp.json();
+					return {
+						query: query,
+						results: data.movies as Movie[],
+						ongoing: false
+					} as SearchState;
+				})
 				.catch((reason) => {
-					error = reason as string;
+					return {
+						query: query,
+						error: reason,
+						ongoing: false
+					} as SearchState;
 				});
-			movies = data.movies as Movie[];
-			showingQuery = data.query as string;
+
+			searchState.set(resultState);
 			query = '';
-			searching = false;
 		}
 	}
+
+	$: searching = $searchState.ongoing;
+	$: movies = $searchState.results;
+	$: lastQuery = $searchState.query;
 </script>
 
 <div class="w-full h-full flex flex-col mb-10">
@@ -58,14 +69,14 @@
 			<div class="w-full h-full grid place-items-center">
 				<div class="flex flex-col items-center gap-2">
 					<h1 class="text-2xl text-slate-600">No Results found</h1>
-					<p class="text-slate-600 max-w-md text-center">
+					<p class="text-slate-400 max-w-md text-center">
 						Describe what type of movie you want. For example, you can say "movies like
 						interstellar".
 					</p>
 				</div>
 			</div>
 		{:else}
-			<h1>Showing results for: "{showingQuery}"</h1>
+			<h1>Showing results for: "{lastQuery}"</h1>
 			<!-- show results -->
 			<div class="w-11/12 h-full m-12 grid gap-4 sm:grid-cols-3 mt-6">
 				{#each movies as movie}
