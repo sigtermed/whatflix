@@ -40,7 +40,7 @@
 	<nav class="w-full p-2 flex flex-row justify-between">
 		<!-- logo -->
 		<a href="/" class="flex flex-row gap-2 items-center p-1">
-			<img class="w-12" src="favicon.png" alt="whatflix" />
+			<img class="w-12" src="/favicon.png" alt="whatflix" />
 			<h1 class="hidden md:inline-block text-3xl font-bold tracking-wider text-red-600">
 				Whatflix
 			</h1>

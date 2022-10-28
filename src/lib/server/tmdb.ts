@@ -1,7 +1,8 @@
-import type { Genre, Movie } from "$lib/types"
+import type { Genre, Movie, MovieDetail } from "$lib/types"
 
 const apiKey = import.meta.env.VITE_TMDB_KEY
 const v3BaseUrl = "https://api.themoviedb.org/3"
+const imageUrl = "https://image.tmdb.org/t/p/w780"
 
 let genres: Genre[] = [];
 
@@ -67,5 +68,9 @@ export async function getMovie(id: string) {
     u.search = params.toString();
 
     const resp = await fetch(u).then(resp => resp.json())
-    return resp as Movie
+    const movie = resp as MovieDetail
+    if (movie.backdrop_path) {
+        movie.backdrop_path = `https://image.tmdb.org/t/p/w780${movie.backdrop_path}`
+    }
+    return movie
 }
