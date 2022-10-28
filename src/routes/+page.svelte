@@ -31,7 +31,7 @@
 	}
 
 	$: searching = $searchState.ongoing;
-	$: movies = $searchState.results;
+	$: movies = $searchState.results || [];
 	$: lastQuery = $searchState.query;
 </script>
 
@@ -80,7 +80,7 @@
 			<!-- show results -->
 			<div class="w-11/12 h-full m-12 grid gap-4 sm:grid-cols-3 mt-6">
 				{#each movies as movie}
-					<MovieCard imageUrl={movie.backdrop_path} title={movie.title} likes={10} />
+					<MovieCard {movie} />
 				{/each}
 			</div>
 		{/if}
