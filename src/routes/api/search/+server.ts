@@ -21,10 +21,10 @@ export async function GET({ url }: RequestEvent) {
         return results[0]
     }) || []
 
-    const movies = await (await Promise.all(searchAll)).flat();
+    const movies = await Promise.all(searchAll);
 
     return json({
         query: query,
-        movies: movies,
+        movies: movies.flat().filter(m => m != null),
     })
 }

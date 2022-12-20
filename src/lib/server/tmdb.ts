@@ -54,9 +54,9 @@ export async function searchMovie(title: string) {
     u.search = params.toString();
 
     const resp = await fetch(u).then(resp => resp.json())
-    const movies = resp.results as Movie[]
-
-    return await Promise.all(movies.map(async (m) => expandMovie(m)))
+    const moviesFuture = ((resp.results || []) as Movie[])
+    const movies = await Promise.all(moviesFuture.map(async (m) => expandMovie(m)))
+    return movies.filter(f => f !== null)
 }
 
 export async function getMovie(id: string) {
